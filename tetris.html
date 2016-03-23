@@ -12,23 +12,94 @@
 //GLOBALS
 const $body = $("body");
 
-function mb(left, top, widthHieght = 10, backgroundColor = "black"){
+const block = {
+	size: 15,
+	border: "black solid 1px",
+	gridBorder: {
+		backgroundColor: "black"
+	}
+}
 
-	console.log(`left: ${left} top: ${top}`);
+const grid = {
+	size: 40
+}
 
-	var widthHieght = widthHieght + "px";
+//==TEMP==//
+/*var tempInc = function(){
+	var inc = -10;
+	return function(){
+		inc += 10;
+		return inc;
+	}
+}
 
-	var block = $("<div></div>").css({
+ti1 = tempInc();
+ti2 = tempInc();*/
+//==TEMP END==//
+
+function mb(left = 0, top = 0, border = block.border){
+
+	var blockSize = block.size + "px";
+
+	return $("<div class='tetris-block'></div>").css({
 		position: "absolute",
-		width: widthHieght,
-		height: widthHieght,
+		width: blockSize,
+		height: blockSize,
 		left: left,
 		top: top,
-		backgroundColor: backgroundColor
+		border: border
 	});
-
-	$body.append( block );
 }
+
+/*initPos = [widht, height]*/
+/*widthHeight = 100 blocks*/
+function makeGrid(initPos = [10,10], widthHeight = grid.size){
+
+	var innerGrid = $("<div></div>");
+	var blocks;
+
+	var currentLeft = initPos[0];
+	var currentTop = initPos[1];
+
+	var blockSize = block.size;
+
+	for(let i=0; i<widthHeight; i++){
+
+		//reset left
+		currentLeft = initPos[0];
+
+		//increment top
+		currentTop += blockSize;
+
+		for(let j=0; j<widthHeight; j++){
+
+			//increment left
+			currentLeft += blockSize;	
+
+			//append blocks to grid	
+			innerGrid.append( mb(currentLeft, currentTop) );
+		}
+	}
+
+	//get only blocks
+	blocks = innerGrid.children();
+
+	$body.append( blocks ); 
+	
+	//make borderUp
+	blocks.slice(0, widthHeight).css( block.gridBorder );
+
+	//make borderDown
+	blocks.slice(-widthHeight).css( block.gridBorder );	
+
+	//make borderLeft
+	$( [].filter.call(blocks, function(e,i){return i%grid.size === 0}) ).css( block.gridBorder );
+
+	//make borderRight	
+	$( [].filter.call(blocks, function(e,i){return i%grid.size===grid.size-1}) ).css( block.gridBorder );
+}
+
+makeGrid();
 
 </script>
 </body>
