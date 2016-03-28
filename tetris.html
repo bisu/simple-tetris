@@ -24,6 +24,68 @@ const grid = {
 	size: 40
 }
 
+const piece = {
+	initPos: [5,5], //relative to the grid
+	//sequence: ["right", "down", "left"], //FIX optimize into array u8 or some shit that has only for options
+	sequence: ["top", "top", "top", "left"],
+	parser: function(){
+
+		var finalSequence = [];
+		var sequence = this.sequence;
+		var start;
+		var initPos = this.initPos;
+
+
+		sequence.forEach((e, i, sequence)=>{
+
+			if(i === 0){
+				start = initPos;		
+			}else{
+				start = finalSequence[i-1];
+			}
+
+			switch(e){
+				case "right":
+					finalSequence[i] = [start[0] + 1, start[1]]
+					break
+				case "left":
+					finalSequence[i] = [start[0] - 1, start[1]]
+					break				
+				case "top":
+					finalSequence[i] = [start[0], start[1] + 1]
+					break	
+				case "down":
+					finalSequence[i] = [start[0], start[1]-1]
+					break											
+			}
+		});
+
+		//add init position to the front of an array
+		finalSequence.unshift(initPos);
+
+		return finalSequence;
+	},
+	parserTl:function(){
+		
+		var finalSequence = this.parser()
+		finalSequence = finalSequence.map(e=>{
+			return [e[1], e[0]];
+		});
+
+		return finalSequence;
+	},
+	render:function(){
+		var blocksToColor = this.parserTl();
+		var index;
+
+		blocksToColor.forEach((e,i)=>{
+			 index = grid.size * (e[0] - 1) + (e[1] - 1);
+			 $grid.eq(index).color("black");
+		});
+	}
+
+}
+
 //==TEMP==//
 /*var tempInc = function(){
 	var inc = -10;
@@ -36,6 +98,12 @@ const grid = {
 ti1 = tempInc();
 ti2 = tempInc();*/
 //==TEMP END==//
+
+//jquery color plugin
+$.fn.color = function(color) {
+    this.css( "backgroundColor", color );
+    return this;
+};
 
 function mb(left = 0, top = 0, border = block.border){
 
@@ -97,9 +165,15 @@ function makeGrid(initPos = [10,10], widthHeight = grid.size){
 
 	//make borderRight	
 	$( [].filter.call(blocks, function(e,i){return i%grid.size===grid.size-1}) ).css( block.gridBorder );
+
+	return blocks;
 }
 
-makeGrid();
+var $grid = makeGrid();
+piece.render();
+
+
+
 
 </script>
 </body>
