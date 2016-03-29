@@ -24,17 +24,18 @@ const grid = {
 	size: 40
 }
 
-const piece = {
+var piece = {
 	initPos: [5,5], //relative to the grid
 	//sequence: ["right", "down", "left"], //FIX optimize into array u8 or some shit that has only for options
 	sequence: ["top", "top", "top", "left"],
-	parser: function(){
+	seqCordinates: null,
+	init: function(){
 
+		//parser
 		var finalSequence = [];
 		var sequence = this.sequence;
 		var start;
 		var initPos = this.initPos;
-
 
 		sequence.forEach((e, i, sequence)=>{
 
@@ -63,19 +64,16 @@ const piece = {
 		//add init position to the front of an array
 		finalSequence.unshift(initPos);
 
-		return finalSequence;
-	},
-	parserTl:function(){
-		
-		var finalSequence = this.parser();
+		//change coordinates from [left top] to [top, left]
 		finalSequence = finalSequence.map(e=>{
 			return [e[1], e[0]];
 		});
 
-		return finalSequence;
+		this.seqCoordinates = finalSequence;
+		return this;		
 	},
 	render:function(){
-		var blocksToColor = this.parserTl();
+		var blocksToColor = this.seqCoordinates;
 		var index;
 
 		blocksToColor.forEach((e,i)=>{
@@ -84,7 +82,7 @@ const piece = {
 		});
 	},
 	getDom:function(){
-		var finalSequence = this.parserTl();
+		var finalSequence = this.seqCoordinates;
 		var $piece = $();
 		var index;
 
@@ -95,8 +93,10 @@ const piece = {
 
 		return $piece;
 
-	}
+	},
+	move: function(){
 
+	}
 
 }
 
@@ -184,7 +184,7 @@ function makeGrid(initPos = [10,10], widthHeight = grid.size){
 }
 
 var $grid = makeGrid();
-piece.render();
+piece.init().render();
 
 
 
