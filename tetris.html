@@ -67,7 +67,7 @@ const piece = {
 	},
 	parserTl:function(){
 		
-		var finalSequence = this.parser()
+		var finalSequence = this.parser();
 		finalSequence = finalSequence.map(e=>{
 			return [e[1], e[0]];
 		});
@@ -82,7 +82,21 @@ const piece = {
 			 index = grid.size * (e[0] - 1) + (e[1] - 1);
 			 $grid.eq(index).color("black");
 		});
+	},
+	getDom:function(){
+		var finalSequence = this.parserTl();
+		var $piece = $();
+		var index;
+
+		finalSequence.forEach((e,i)=>{
+			 index = grid.size * (e[0] - 1) + (e[1] - 1);
+			 $piece = $piece.add( $grid.eq(index) );
+		});
+
+		return $piece;
+
 	}
+
 
 }
 
